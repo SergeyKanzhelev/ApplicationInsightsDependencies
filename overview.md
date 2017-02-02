@@ -49,6 +49,7 @@ Source code in:
 ###Framework 4.0-4.5 HttpWebRequest & HttpClient
 BCL -> System.Net.dll 
 
+
 HttpClient is using HttpWebRequest as a transport. We can improve HttpClient collection by instrumenting wrapping method, not only transport
 
 ###Framework 4.0 HttpWebRequest Running on FW 4.5.2+
@@ -92,6 +93,12 @@ There is a guide on how to use DiagnosticSource: https://github.com/dotnet/coref
 And I have a sample demonstrating it: https://github.com/lmolkova/correlation/blob/master/src/Microsoft.Extensions.Correlation/Internal/HttpDiagnosticListenerObserver.cs
 I would also like to warn that HttpClient’s DiagnosticSource does not notify about exceptions: https://github.com/dotnet/corefx/issues/13172 which is pretty unfortunate.
 
+https://github.com/Microsoft/ApplicationInsights-dotnet-server/blob/develop/Src/DependencyCollector/Shared/HttpDependenciesParsingTelemetryInitializer.cs#L40
+
+ 1. Use specific name for specific operations. Like "Lease Blob" for "?comp=lease" query parameter
+ 2. Use account name as a target instead of "account.blob.core.windows.net"
+ 3. Do not include container name into name as it is high cardinality. Move to custom properties
+ 4. Parse blob name and put into custom properties as well
 
 ##Node.js dependencies collection
 
