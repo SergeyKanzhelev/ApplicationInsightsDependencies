@@ -14,6 +14,10 @@ Dependencies schema https://github.com/Microsoft/ApplicationInsights-Home/blob/m
 
 How status monitor works http://apmtips.com/blog/2016/11/18/how-application-insights-status-monitor-not-monitors-dependencies/
 
+Cross component correllation proposed communication protocols:
+- Basic context propogation (V1): https://github.com/lmolkova/correlation/blob/master/http_protocol_proposal_v1.md
+- Support for request-context (V2): https://github.com/lmolkova/correlation/blob/master/http_protocol_proposal_v2.md
+
 Source code in:
 - .NET https://github.com/Microsoft/ApplicationInsights-dotnet-server/tree/develop/Src/DependencyCollector
 - node.js https://github.com/Microsoft/ApplicationInsights-node.js/blob/develop/AutoCollection/ClientRequests.ts
@@ -34,6 +38,8 @@ Source code in:
 - https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/283 (Allow custom code to override request.source and dependency.target fields)
 - https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/113 (Correlate async dependencies with requests)
 - https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/57 (Azure Storage SDK "chunking" affects AI context tracking)
+- https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/340 (Request-Dependency correlation is broken)
+- https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/333 (Telemetry does not include "ai.operation.parentId")
 
 
 ##.NET dependencies collection
@@ -75,11 +81,23 @@ Two transport layers:
 
 See https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/125
 
-##node.js dependencies collection
+
+###Service Fabric RPC
+
+TBD
+
+
+###MISC - Categorize later
+There is a guide on how to use DiagnosticSource: https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/DiagnosticSourceUsersGuide.md
+And I have a sample demonstrating it: https://github.com/lmolkova/correlation/blob/master/src/Microsoft.Extensions.Correlation/Internal/HttpDiagnosticListenerObserver.cs
+I would also like to warn that HttpClient’s DiagnosticSource does not notify about exceptions: https://github.com/dotnet/corefx/issues/13172 which is pretty unfortunate.
+
+
+##Node.js dependencies collection
 
 Only http dependencies are collected out of the box.
 
-Problems
+Problems:
 1. Lack of request to dependency correlation
 2. No cross component transaction id propogation
 3. No client-side http parsing into Azure Storage
@@ -89,7 +107,7 @@ Problems
 
 Only http dependencies are supported
 
-Problems
+Problems:
 1. No cross component correlation (target/source)
 2. No client-side http parsing into Azure Storage
 3. No sampling on dependencies from a single page, only hard limit on count
